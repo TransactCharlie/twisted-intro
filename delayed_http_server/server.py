@@ -5,31 +5,18 @@ from twisted.web import server, resource
 from twisted.web.server import NOT_DONE_YET
 from twisted.internet import reactor
 import random
-
-INSULTS = [
-    "You are funny lookin!",
-    "I don't know what your problem is, but I'll bet it's hard to pronounce.",
-    "How about never? Is never good for you?",
-    "I see you've set aside this special time to humiliate yourself in public.",
-    "I'll try being nicer if you'll try being smarter.",
-    "It sounds like English, but I can't understand a word you're saying.",
-    "I will always cherish the initial misconceptions I had about you."
-    ]
-
-def get_insult():
-    """returns a random insult"""
-    return random.choice(INSULTS)
-
+from insults import get_insult
+import uuid
 
 
 class InsultThem(resource.Resource):
     isLeaf = True
 
-    def _response_and_close(self, request, insult):
+    def _response_and_close(self, request, insult, request_id):
         """replies to the request with an insult and closes the request"""
         request.write(insult)
         request.finish()
-        print "served: insult: {i}".format(i = insult)
+        print "{u} : served: insult: {i}".format(u = request_id, i = insult)
 
 
     def render_GET(self, request):
@@ -37,10 +24,13 @@ class InsultThem(resource.Resource):
         delay = random.choice((0,1,2,3,4,5))
         insult = get_insult()
 
+        # Unique identifier
+        request_id = uuid.uuid1()
+
         # Register a callback to write to the request stream and close
-        print "request: delay: {d}, insult: {i}".format(d = delay, i = insult)
+        print "{u} : request: delay: {d}, insult: {i}".format(u = request_id, d = delay, i = insult)
         d = deferLater(reactor, delay, lambda: request)
-        d.addCallback(self._response_and_close, insult)
+        d.addCallback(self._response_and_close, insult, request_id)
 
         # Return a token to ask the client to keep polling / keep alive.
         return NOT_DONE_YET
