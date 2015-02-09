@@ -9,7 +9,9 @@ INSULTS = [
     "I see you've set aside this special time to humiliate yourself in public.",
     "I'll try being nicer if you'll try being smarter.",
     "It sounds like English, but I can't understand a word you're saying.",
-    "I will always cherish the initial misconceptions I had about you."
+    "I will always cherish the initial misconceptions I had about you.",
+    "The fact that no one understands you doesn't mean you're an artist.",
+    "Whatever kind of look you were going for, you missed."
     ]
 
 def get_insult():
